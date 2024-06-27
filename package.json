@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "obsidian-messager-plugin",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "Send messages to obsidian through Wecaht/HTTP Api/Email, used in conjunction with the wechatobsidian.com service",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",

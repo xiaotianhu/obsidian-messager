@@ -29,7 +29,7 @@ export class AppendSettingTab extends PluginSettingTab {
 		.setDesc(this.lang.DESC_APIKEY)
 		.addText(text => text
 			.setPlaceholder(this.lang.PH_APIKEY)
-			.setValue(this.plugin.settings.apikey)
+			.setValue(this.plugin.settings.apikey ?? "")
 			.onChange(async (value) => {
 				this.plugin.settings.apikey = value;
 				await this.plugin.saveSettings();
@@ -132,11 +132,19 @@ export class AppendSettingTab extends PluginSettingTab {
 				try {
 					let note = new Note(this.app, this.plugin);
 					await note.getAndSaveMessage(true);
-					new Notice(this.lang.APIKEY_VERIFYOK);
 				} catch (err) {
+					new Notice(this.lang.APIKEY_VERIFYERR+err);
 					return;
 				}
 			});
 		});
-	}
+
+        // desc 
+        const p = containerEl.createEl('p');
+        p.appendText(this.lang.MORE_DESC);
+        p.createEl('a', {
+            text: 'wechatobsidian.com',
+            href: 'https://wechatobsidian.com',
+        });
+    }
 }

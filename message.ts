@@ -19,26 +19,21 @@ export default class Message {
 
 			const resp = await fetch(req)
 			if (!resp.ok) {
-				new Notice(this.lang.API_ERROR + " API server status err:" + resp.status);
 				throw Error(this.lang.API_ERROR + " API server status err:" + resp.status);
 			}
 			let r = await resp.json();
 			if (typeof r["status"] == "undefined" || r["status"] < 1) {
-				new Notice(this.lang.API_ERROR + "resp err.");
 				throw Error(this.lang.API_ERROR + "resp err.");
 			}
 			// apikey user not exist.
 			if (r["status"] == 204) {
-				new Notice(this.lang.API_USERERR);
 				throw Error(this.lang.API_USERERR);
 			}
 
 			if (r["status"] != 200) {
 				if (typeof r["msg"] != "undefined" && r["msg"].length > 0) {
-					new Notice(this.lang.API_ERROR + "getMessage:" + r["msg"]);
 					throw Error(this.lang.API_ERROR + "getMessage:" + r["msg"]);
 				} else {
-					new Notice(this.lang.API_ERROR + " getMessage status err:" + resp.status);
 					throw Error(this.lang.API_ERROR + " getMessage status err:" + resp.status);
 				}
 			}

@@ -4,3 +4,4 @@ log/
 .DS_Store
 wechatpay_cert/
 main.js
+data.json

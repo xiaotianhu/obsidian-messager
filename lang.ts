@@ -2,8 +2,9 @@ import { App, Plugin, TFolder, TAbstractFile } from 'obsidian';
 
 export default class Lang {
 	NAME_APIKEY: string  = "ApiKey";
-	DESC_APIKEY: string = "Get ApiKey from MessageToObsidian.com";
+	DESC_APIKEY: string = "Get ApiKey from wechatobsidian.com";
 	PH_APIKEY: string = "Enter your ApiKey";
+    MORE_DESC:string   = "For more usage methods, to register a new account, or to provide feedback, please visit:";
 
 	NAME_SAVEDIR: string = "Select folder to save";
 	DESC_SAVEDIR: string = "Select which folder to save new messages";
@@ -21,6 +22,7 @@ export default class Lang {
 	DESC_REFRESHINTERVAL: string = "Refresh new message interval in seconds";
 
 	APIKEY_VERIFYOK: string = "Apikey verify ok.";
+    APIKEY_VERIFYERR: string = "Apikey verify err:";
 
 	NAME_VERIFYBTN: string = "Verify ApiKey";
 	DESC_VERIFYBTN: string = "Check whether ApiKey is valid";
@@ -30,14 +32,18 @@ export default class Lang {
 	API_USERERR: string = "Apikey not found, user not exist.";
 
 	constructor() {
-		this.loadChineseLang();	
+        let lang = window.localStorage.getItem('language');
+        if (lang == "zh" || lang == "zh-cn" || lang == "zh-TW") {
+		    this.loadChineseLang();	
+        } 
 	}
 	
 	// load chinese lang 
 	loadChineseLang() {
 		this.NAME_APIKEY = "ApiKey";
-		this.DESC_APIKEY = "前往MessageToObsidian.com获取ApiKey";
+		this.DESC_APIKEY = "前往wechatobsidian.com获取ApiKey";
 		this.PH_APIKEY   = "请输入ApiKey";
+        this.MORE_DESC   = "更多使用方法，注册新账户，意见反馈等 请访问:";
 
 		this.NAME_SAVEDIR = "选择目录";
 		this.DESC_SAVEDIR = "选择新消息要保存到的目录";
@@ -55,12 +61,13 @@ export default class Lang {
 		this.DESC_REFRESHINTERVAL = "单位为秒";
 
 		this.APIKEY_VERIFYOK = "Apikey 验证成功！";
+		this.APIKEY_VERIFYERR = "Apikey 验证失败:";
 
 		this.NAME_VERIFYBTN = "检查ApiKey";
 		this.DESC_VERIFYBTN = "测试ApiKey是否正确";
 		
 		this.ERROR = "Message插件错误:";
 		this.API_ERROR = "Message插件服务器错误:"; 
-		this.API_USERERR = "Apikey验证失败，用户不存在。";
+		this.API_USERERR = "用户不存在。";
 	}
 }

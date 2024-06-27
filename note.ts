@@ -25,6 +25,9 @@ export default class Note {
 	// get message and save to vault
 	async getAndSaveMessage(isVerify: boolean) {
 		try {
+            if (this.plugin.settings == null || this.plugin.settings.apikey == null || this.plugin.settings.apikey == "") {
+                throw Error(this.lang.PH_APIKEY);
+            }
 			let note = new Note(this.app, this.plugin);
 			let messages = await (new Message).getMessage(this.plugin.settings.apikey, isVerify);
 			for (let k in messages) {
@@ -34,6 +37,7 @@ export default class Note {
 				}
 			}
 		} catch (err) {
+            console.log("getAndSaveMessage err:", err);
 			throw err
 		}
 	}
@@ -43,28 +47,30 @@ export default class Note {
 		let title = this.getTitle(setting, note);
 		let fullpath = setting.savedFolder + "/" + title;
 		try {
-			// append mode
-			if (setting.conflictFileRule == "append") {
+			// append mode default
+			if (setting.conflictFileRule == "append" || setting.conflictFileRule == "") {
 				if (this.fileExists(fullpath) ) {
 					let originFile = this.app.vault.getAbstractFileByPath(fullpath)
 					if (originFile instanceof TFile) {
 						let originData = await this.app.vault.read(originFile);
 						let newData = originData + "\n" + note;
 						await this.app.vault.modify(originFile, newData);
+                        return
 					} else {
 						// error, should'n be here
 						new Notice(this.lang.ERROR + "file:" + fullpath + " not exist with append mode.");
+                        return
 					}
 				} else {
 					// file not exist, just add it 
 					await this.app.vault.create(fullpath, note);
+                    return
 				}
-			}
-			// new file mode
-			if (setting.conflictFileRule == "new") {
+			} else {
+			    // new file mode
 				await this.app.vault.create(fullpath, note);
 			}
-
+        
 			this.helper.addStatus("new message to note:"+fullpath, this.plugin);
 		} catch (err) {
 			console.log("MessageToObsidian addNote exception:", err);

@@ -17,7 +17,7 @@ export default class AppendPlugin extends Plugin {
 
 	async loadSettings(): Promise<AppendPluginSettings> {
 		let oriData: AppendPluginSettings = await this.loadData()
-		if (oriData.apikey.length > 1) {
+		if (oriData != null && typeof oriData.apikey != 'undefined' && oriData.apikey.length > 1) {
 			this.settings = Object.assign({}, oriData);
 		} else {
 			const defaultConf: AppendPluginSettings = {
@@ -39,10 +39,22 @@ export default class AppendPlugin extends Plugin {
 
 	// interval refresh 
 	intervalRefresh() {
-		let interval = Number(this.settings.refreshInterval) * 1000
+        var interval = 10
+        if (this.settings != null && typeof this.settings.refreshInterval != "undefined" && this.settings.refreshInterval != null) {
+            if (Number(this.settings.refreshInterval) > 1) {
+		        interval = Number(this.settings.refreshInterval) * 1000
+            } else {
+                interval = 10 * 1000;
+            }
+        }
+
 		this.registerInterval(window.setInterval(async () => {
-			let note = new Note(this.app, this);
-			await note.getAndSaveMessage(false);
+            try {
+                let note = new Note(this.app, this);
+                await note.getAndSaveMessage(false);
+            } catch(err) {
+               console.log("Messager plugin err:", err); 
+            }
 		}, interval));
 	}
 }
