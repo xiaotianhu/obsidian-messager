@@ -3,7 +3,7 @@
 	"name": "Messager",
 	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "Send messages to obsidian through Wecaht/HTTP Api/Email, used in conjunction with the wechatobsidian.com service.",
+	"description": "Save messages into vault which sending through Wecaht/HTTP Api/Email",
 	"author": "Rainyluo",
 	"authorUrl": "https://wechatobsidian.com",
 	"isDesktopOnly": false
