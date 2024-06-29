@@ -80,7 +80,7 @@ export default class Note {
 
 	// generate title 
 	getTitle(setting: AppendPluginSettings, note: string): string {
-		var title = "";
+		let title = "";
 		let date  = new Date();
 		if (setting.filenameRule == "yyyy-mm-dd") {
 			const year  = date.getFullYear();

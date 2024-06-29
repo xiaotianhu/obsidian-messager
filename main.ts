@@ -39,7 +39,7 @@ export default class AppendPlugin extends Plugin {
 
 	// interval refresh 
 	intervalRefresh() {
-        var interval = 10
+        let interval = 10
         if (this.settings != null && typeof this.settings.refreshInterval != "undefined" && this.settings.refreshInterval != null) {
             if (Number(this.settings.refreshInterval) > 1) {
 		        interval = Number(this.settings.refreshInterval) * 1000

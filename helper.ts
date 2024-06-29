@@ -24,7 +24,7 @@ export default class Helper {
 			});
 		};
 		traverse(rootPath);	
-		var dirs: string[] = []
+		let dirs: string[] = []
 		if (directories.length < 1) return dirs;
 		for (const k in directories) {
 			const dir: TFolder = directories[k];
