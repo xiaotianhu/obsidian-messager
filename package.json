@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-messager-plugin",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"description": "Send messages to obsidian through Wecaht/HTTP Api/Email, used in conjunction with the wechatobsidian.com service",
 	"main": "main.js",
 	"scripts": {
