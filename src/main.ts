@@ -1,7 +1,7 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { AppendPluginSettings } from "helper";
-import { AppendSettingTab } from 'config';
-import Note from 'note';
+import { AppendPluginSettings } from "./helper";
+import { AppendSettingTab } from './config';
+import Note from './note';
 
 export default class AppendPlugin extends Plugin {
 	settings: AppendPluginSettings;
@@ -53,7 +53,7 @@ export default class AppendPlugin extends Plugin {
                 let note = new Note(this.app, this);
                 await note.getAndSaveMessage(false);
             } catch(err) {
-               console.log("Messager plugin err:", err); 
+               console.error("Messager plugin err:", err); 
             }
 		}, interval));
 	}

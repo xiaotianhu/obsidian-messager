@@ -1,5 +1,5 @@
-import { App, PluginSettingTab, Setting, Notice } from 'obsidian';
-import Lang from 'lang';
+import { App, PluginSettingTab, Setting, Notice, requestUrl} from 'obsidian';
+import Lang from './lang';
 export default class Message {
 	apiUrl: string ;
 	lang: Lang;
@@ -12,16 +12,19 @@ export default class Message {
 	// get message from API 
 	async getMessage(apikey: string, verify: boolean): Promise<Object[]> {
 		try {
-			let req = this.apiUrl + "?apikey="+apikey; 
+			let reqUrl = this.apiUrl + "?apikey="+apikey; 
 			if (verify) {
-				req += "&verify=true";
+				reqUrl += "&verify=true";
 			}
+            let resp = await requestUrl(reqUrl);
 
-			const resp = await fetch(req)
-			if (!resp.ok) {
-				throw Error(this.lang.API_ERROR + " API server status err:" + resp.status);
-			}
-			let r = await resp.json();
+            if (resp.status != 200) {
+                throw Error(this.lang.API_ERROR + " API server status err:" + resp.status);
+            }
+            if (resp.json.length < 1) {
+                throw Error(this.lang.API_ERROR + " API server response empty.")
+            }
+            let r = resp.json;
 			if (typeof r["status"] == "undefined" || r["status"] < 1) {
 				throw Error(this.lang.API_ERROR + "resp err.");
 			}
@@ -43,7 +46,7 @@ export default class Message {
 			}
 			return r["data"];
 		} catch(err) {
-			console.log(this.lang.API_ERROR + " getMessage err,fetch exception", err);
+			console.error(this.lang.API_ERROR + " getMessage err,fetch exception", err);
 			throw err;
 		}
 	}

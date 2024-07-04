@@ -1,8 +1,8 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
-import AppendPlugin from 'main';
-import Helper,{ AppendPluginSettings } from "helper";
-import Lang from 'lang';
-import Message from 'message';
+import AppendPlugin from './main';
+import Helper,{ AppendPluginSettings } from "./helper";
+import Lang from './lang';
+import Message from './message';
 
 interface RespMsg {
 	content: string
@@ -37,7 +37,7 @@ export default class Note {
 				}
 			}
 		} catch (err) {
-            console.log("getAndSaveMessage err:", err);
+            console.error("getAndSaveMessage err:", err);
 			throw err
 		}
 	}
@@ -73,7 +73,7 @@ export default class Note {
         
 			this.helper.addStatus("new message to note:"+fullpath, this.plugin);
 		} catch (err) {
-			console.log("MessageToObsidian addNote exception:", err);
+			console.error("MessageToObsidian addNote exception:", err);
 			new Notice(this.lang.ERROR + "file:" + fullpath + " addNote exception:" + err);
 		}
 	}

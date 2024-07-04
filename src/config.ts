@@ -1,8 +1,8 @@
 import { App, PluginSettingTab, Setting, Notice } from 'obsidian';
-import Helper, { AppendPluginSettings } from "helper";
-import Lang from 'lang';
-import AppendPlugin from 'main';
-import Note from 'note';
+import Helper, { AppendPluginSettings } from "./helper";
+import Lang from './lang';
+import AppendPlugin from './main';
+import Note from './note';
 
 export class AppendSettingTab extends PluginSettingTab {
 	helper: Helper;
@@ -143,8 +143,8 @@ export class AppendSettingTab extends PluginSettingTab {
         const p = containerEl.createEl('p');
         p.appendText(this.lang.MORE_DESC);
         p.createEl('a', {
-            text: 'wechatobsidian.com',
-            href: 'https://wechatobsidian.com',
+            text: 'Here',
+            href: 'https://wxob.pipebox.pro/jump',
         });
     }
 }
