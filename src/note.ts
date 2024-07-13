@@ -127,9 +127,10 @@ export default class Note {
 
 	// detect if file exists 
 	fileExists(file: string): boolean {
-		if (this.app.vault.getAbstractFileByPath(file) == null) {
+        let f = this.app.vault.getAbstractFileByPath(file)
+		if (f == null) {
 			return false;
 		}
-		return true;
+		return f instanceof TFile;
 	}
 }
