@@ -1,10 +1,10 @@
 {
 	"id": "messager",
 	"name": "Messager",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"minAppVersion": "0.15.0",
-	"description": "Save messages to vault from WeChat, HTTP API, and Email",
+	"description": "Save messages into vault which sending through WeChat / HTTP API / Email",
 	"author": "Rainyluo",
-	"authorUrl": "https://wxob.pipebox.pro",
+	"authorUrl": "https://wechatobsidian.com/",
 	"isDesktopOnly": false
 }
