@@ -82,16 +82,14 @@ export default class Note {
 	getTitle(setting: AppendPluginSettings, note: string): string {
 		let title = "";
 		let date  = new Date();
+        const year  = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day   = date.getDate().toString().padStart(2, '0');
 		if (setting.filenameRule == "yyyy-mm-dd") {
-			const year  = date.getFullYear();
-			const month = (date.getMonth() + 1).toString().padStart(2, '0');
-			const day   = date.getDate().toString().padStart(2, '0');
 			title = `${year}-${month}-${day}`;
 		}
 
 		if (setting.filenameRule == "mm-dd") {
-			const month = (date.getMonth() + 1).toString().padStart(2, '0');
-			const day   = date.getDate().toString().padStart(2, '0');
 			title = `${month}-${day}`;
 		}
 
@@ -102,17 +100,24 @@ export default class Note {
 				title = split[0].substr(0, 20)	
 			}
 		}
+
+        // if title is empty, give it a default name
+        if (title == "") {
+			title = `${year}-${month}-${day}`;
+        }
+
 		// append to exist file, so no need to detect if file exists
-		if (setting.conflictFileRule == "append") {
+		if (setting.conflictFileRule != "new") {
 			return title + ".md";
 		}
-		// file not exist 
+
+		// 'new mode', need to check if file exist or not
 		let f = setting.savedFolder + "/" + title + ".md";
 		if (!this.fileExists(f)) {
 			return title + ".md";
 		}
 
-		// just need a new name
+		// just need a new name to resolve conflict
 		for (let i = 0; i <= 1000; i++){
 			let newFile = setting.savedFolder + "/" + title + "(" + i + ")" + ".md";
 			if (!this.fileExists(newFile)) {
