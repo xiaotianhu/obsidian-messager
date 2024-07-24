@@ -1,7 +1,7 @@
 {
 	"id": "messager",
 	"name": "Messager",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"minAppVersion": "0.15.0",
 	"description": "Save messages into vault which sending through WeChat / HTTP API / Email",
 	"author": "Rainyluo",
