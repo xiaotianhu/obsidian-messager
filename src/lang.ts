@@ -14,6 +14,10 @@ export default class Lang {
 	FILENAME_RULE_CONTENT: string = "First line of message";
 
 	NAME_CONFLICTFILE: string   = "Conflict filename rule";
+    TITLE_FIXED: string = "fixed title";
+    SET_TITLE_FIXED: string = "set fixed title";
+    TITLE_FIXED_DESC: string = "Set a fixed file name without needing to include the .md file extension.";
+    TITLE_FIXED_ERR: string = "Fixed title error:";
 	DESC_CONFLICTFILE: string   = "How to deal when filename already existed";
 	CONFLICTFILE_NEW: string    = "Create new file";
 	CONFLICTFILE_APPEND: string = "Append to existed file";
@@ -53,6 +57,10 @@ export default class Lang {
 		this.FILENAME_RULE_CONTENT = "消息首行内容";
 
 		this.NAME_CONFLICTFILE   = "文件名已存在时处理规则";
+        this.SET_TITLE_FIXED     = "设置固定标题";
+        this.TITLE_FIXED_DESC    = "设置固定的文件名，不需要包含 .md 后缀";
+        this.TITLE_FIXED         = "固定标题";
+        this.TITLE_FIXED_ERR     = "固定标题设置错误：";
 		this.DESC_CONFLICTFILE   = "当文件名已经存在时如何处理";
 		this.CONFLICTFILE_NEW    = "创建新文件";
 		this.CONFLICTFILE_APPEND = "在已存在的文件后添加";

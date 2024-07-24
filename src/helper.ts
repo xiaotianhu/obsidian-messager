@@ -6,6 +6,7 @@ export interface AppendPluginSettings {
 	filenameRule: string;
 	conflictFileRule: string;
 	refreshInterval: string;
+    fixedTitle: string; // not empty if conflictFileRule=fixedTitle
 }
 
 export default class Helper {

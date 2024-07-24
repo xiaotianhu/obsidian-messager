@@ -9,6 +9,7 @@ export class AppendSettingTab extends PluginSettingTab {
 	lang: Lang;
 	plugin: AppendPlugin;
 	app: App;
+    fixedTitleContainer: HTMLElement; // container for fixed title input
 	
 	constructor(app: App, plugin: AppendPlugin) {
 		super(app, plugin);
@@ -65,16 +66,30 @@ export class AppendSettingTab extends PluginSettingTab {
 			dropdown.addOption("yyyy-mm-dd", "yyyy-mm-dd");
 			dropdown.addOption("mm-dd", "mm-dd");
 			dropdown.addOption(this.lang.FILENAME_RULE_CONTENT, this.lang.FILENAME_RULE_CONTENT);
+			dropdown.addOption("fixed", this.lang.TITLE_FIXED);
+
 			if (this.plugin.settings.filenameRule.length < 1) {
 				dropdown.setValue("mm-dd");
 			} else {
 				dropdown.setValue(this.plugin.settings.filenameRule);
 			}
 			dropdown.onChange(async (value) => {
-				this.plugin.settings.filenameRule = value;
-				await this.plugin.saveSettings();
+                this.plugin.settings.filenameRule = value;
+                if (value == "fixed") {
+                    this.inputForFixedTitle()
+                } else {
+                    this.fixedTitleContainer.empty()
+                    this.plugin.settings.fixedTitle = "";
+                    await this.plugin.saveSettings();
+                }
 			});
+
+            this.fixedTitleContainer = containerEl.createDiv();
+            if (this.plugin.settings.filenameRule == "fixed") {
+                this.inputForFixedTitle() // show saved value
+            }
 		});
+
 
 		// conflict filename rule 
 		new Setting(containerEl)
@@ -146,5 +161,26 @@ export class AppendSettingTab extends PluginSettingTab {
             text: 'Here',
             href: 'https://wxob.pipebox.pro/jump',
         });
+    }
+
+    // add an input setting for set fixed title 
+    inputForFixedTitle(): void {
+        this.fixedTitleContainer.empty()
+		// fixed title input
+		new Setting(this.fixedTitleContainer)
+		.setName(this.lang.SET_TITLE_FIXED)
+		.setDesc(this.lang.TITLE_FIXED_DESC)
+		.addText(text => text
+			.setPlaceholder(this.lang.SET_TITLE_FIXED)
+			.setValue(this.plugin.settings.fixedTitle ?? "")
+			.onChange(async (value) => {
+                if (value.indexOf(".") >= 0) {
+                    new Notice(this.lang.TITLE_FIXED_ERR + "can't include . in filename");
+                    return
+                }
+				this.plugin.settings.fixedTitle = value;
+				await this.plugin.saveSettings();
+			})
+		);
     }
 }

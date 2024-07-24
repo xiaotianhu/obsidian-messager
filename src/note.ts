@@ -44,11 +44,22 @@ export default class Note {
 
 	// add note to vault
 	async addNote(setting: AppendPluginSettings, note: string) {
-		let title = this.getTitle(setting, note);
-		let fullpath = setting.savedFolder + "/" + title;
+        let savedFolder = setting.savedFolder
+		let title       = this.getTitle(setting, note);
+        let fullpath    = ""
+
+        if (savedFolder[savedFolder.length - 1] == "/") {
+            if (savedFolder == "/") {
+		        fullpath = title;
+            } else {
+		        fullpath = savedFolder + title;
+            }
+        } else {
+		    fullpath = savedFolder + "/" + title;
+        }
 		try {
 			// append mode default
-			if (setting.conflictFileRule == "append" || setting.conflictFileRule == "") {
+			if (setting.conflictFileRule == "append" || setting.conflictFileRule.length < 1) {
 				if (this.fileExists(fullpath) ) {
 					let originFile = this.app.vault.getAbstractFileByPath(fullpath)
 					if (originFile instanceof TFile) {
@@ -101,6 +112,10 @@ export default class Note {
 			}
 		}
 
+        if (setting.filenameRule == "fixed" && setting.fixedTitle.length > 0) {
+            title = setting.fixedTitle
+        }
+
         // if title is empty, give it a default name
         if (title == "") {
 			title = `${year}-${month}-${day}`;
@@ -133,6 +148,7 @@ export default class Note {
 	// detect if file exists 
 	fileExists(file: string): boolean {
         let f = this.app.vault.getAbstractFileByPath(file)
+        console.log("fileExists:", f, file)
 		if (f == null) {
 			return false;
 		}
