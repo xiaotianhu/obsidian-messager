@@ -34,7 +34,7 @@ export default class Lang {
 	ERROR: string       = "Messager error:";
 	API_ERROR: string   = "Messager server response error:";
 	API_USERERR: string = "API key not found, user not exist.";
-
+    LATEST_UPDATE: string = "Latest update(v1.0.5): add fixed title config";
 	constructor() {
         let lang = window.localStorage.getItem('language');
         if (lang == "zh" || lang == "zh-cn" || lang == "zh-TW") {
@@ -77,5 +77,7 @@ export default class Lang {
 		this.ERROR       = "Messager 错误:";
 		this.API_ERROR   = "Messager 服务器错误:";
 		this.API_USERERR = "用户不存在。";
+
+        this.LATEST_UPDATE = "最近更新说明(v1.0.5): 增加固定标题配置项";
 	}
 }

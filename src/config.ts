@@ -161,6 +161,13 @@ export class AppendSettingTab extends PluginSettingTab {
             text: 'Here',
             href: 'https://wxob.pipebox.pro/jump',
         });
+        p.style.fontSize = '12px';  
+        p.style.color = '#888888';  
+        // latest update
+        const updDesc = containerEl.createEl('p');
+        updDesc.appendText(this.lang.LATEST_UPDATE);
+        updDesc.style.fontSize = '12px';  
+        updDesc.style.color = '#888888';  
     }
 
     // add an input setting for set fixed title 
