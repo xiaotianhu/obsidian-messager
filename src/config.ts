@@ -111,6 +111,32 @@ export class AppendSettingTab extends PluginSettingTab {
 			});
 		});
 
+		// add prefix
+		new Setting(containerEl)
+		.setName(this.lang.PREFIX_TITLE)
+		.setDesc(this.lang.PREFIX_DESC)
+		.addText(text => text
+			.setPlaceholder(this.lang.PREFIX_TITLE)
+			.setValue(this.plugin.settings.contentPrefix ?? "")
+			.onChange(async (value) => {
+				this.plugin.settings.contentPrefix = value;
+				await this.plugin.saveSettings();
+			})
+		);
+
+		// add suffix
+		new Setting(containerEl)
+		.setName(this.lang.SUFFIX_TITLE)
+		.setDesc(this.lang.SUFFIX_DESC)
+		.addText(text => text
+			.setPlaceholder(this.lang.SUFFIX_TITLE)
+			.setValue(this.plugin.settings.contentSuffix ?? "")
+			.onChange(async (value) => {
+				this.plugin.settings.contentSuffix = value;
+				await this.plugin.saveSettings();
+			})
+		);
+
 
 		// refresh interval
 		new Setting(containerEl)
@@ -153,19 +179,28 @@ export class AppendSettingTab extends PluginSettingTab {
 				}
 			});
 		});
-
         // desc 
         const p = containerEl.createEl('p');
         p.appendText(this.lang.MORE_DESC);
         p.createEl('a', {
             text: 'Here',
-            href: 'https://wxob.pipebox.pro/jump',
+            href: 'https://wechatobsidian.com/',
         });
         p.style.fontSize = '12px';  
         p.style.color = '#888888';  
+        containerEl.createEl('hr');
+
+        // suffix prefix usage
+        const usage = containerEl.createEl('pre');
+        usage.appendText(this.lang.SUFFIX_PREFIX_USAGE);
+        usage.style.fontSize = '12px';  
+        usage.style.color = '#888888';  
+
+        containerEl.createEl('hr');
+
         // latest update
-        const updDesc = containerEl.createEl('p');
-        updDesc.appendText(this.lang.LATEST_UPDATE);
+        const updDesc = containerEl.createEl('pre');
+        updDesc.appendText(this.lang.LATEST_UPDATE.replace(/\\n/g, '\n'));
         updDesc.style.fontSize = '12px';  
         updDesc.style.color = '#888888';  
     }

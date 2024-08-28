@@ -27,6 +27,8 @@ export default class AppendPlugin extends Plugin {
 				conflictFileRule: "",
 				refreshInterval: "",
                 fixedTitle: "",
+                contentSuffix: "",
+                contentPrefix: ""
 			}
 			this.settings = defaultConf;
 		}

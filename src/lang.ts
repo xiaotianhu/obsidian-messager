@@ -21,6 +21,19 @@ export default class Lang {
 	DESC_CONFLICTFILE: string   = "How to deal when filename already existed";
 	CONFLICTFILE_NEW: string    = "Create new file";
 	CONFLICTFILE_APPEND: string = "Append to existed file";
+    PREFIX_TITLE: string = "Add prefix for each content";
+    PREFIX_DESC: string = "Supports timestamp variables, see the instructions below for details";
+    SUFFIX_TITLE: string = "Add suffix for each content";
+    SUFFIX_DESC: string = "Supports timestamp variables, see the instructions below for details";
+    SUFFIX_PREFIX_USAGE: string = `
+Prefix/Suffix Configuration Usage:
+Supports date variables (must be enclosed in curly braces), supports using \\n for new lines
+{y-m-d h:i:s} corresponds to year-month-day hour:minute:second
+  For example:
+  "date@{y-m-d}"
+  "{ymd@h:i} \\n"
+  "{y-m-d h:i:s} \\n --- \\n"
+`
 
 	NAME_REFRESHINTERVAL: string = "Refresh new message interval";
 	DESC_REFRESHINTERVAL: string = "Refresh new message interval in seconds";
@@ -34,7 +47,7 @@ export default class Lang {
 	ERROR: string       = "Messager error:";
 	API_ERROR: string   = "Messager server response error:";
 	API_USERERR: string = "API key not found, user not exist.";
-    LATEST_UPDATE: string = "Latest update(v1.0.5): add fixed title config";
+    LATEST_UPDATE: string = "Latest update(v1.0.6@24-08-28): Add prefix/suffix settings.";
 	constructor() {
         let lang = window.localStorage.getItem('language');
         if (lang == "zh" || lang == "zh-cn" || lang == "zh-TW") {
@@ -64,6 +77,19 @@ export default class Lang {
 		this.DESC_CONFLICTFILE   = "当文件名已经存在时如何处理";
 		this.CONFLICTFILE_NEW    = "创建新文件";
 		this.CONFLICTFILE_APPEND = "在已存在的文件后添加";
+        this.PREFIX_TITLE        = "为每条内容添加前缀";
+        this.PREFIX_DESC         = "支持时间戳变量，具体参考下方说明";
+        this.SUFFIX_TITLE        = "为每条内容添加后缀";
+        this.SUFFIX_DESC         = "支持时间戳变量，具体参考下方说明";
+        this.SUFFIX_PREFIX_USAGE = 
+`前缀/后缀配置用法： 
+支持日期变量(需要用花括号括起来)，支持用 \\n 换行
+{y-m-d h:i:s} 对应 年-月-日 时:分:秒 
+  例如: 
+  "日期@{y-m-d}"
+  "{ymd@h:i} \\n"
+  "{y-m-d h:i:s} \\n --- \\n"
+`
 	
 		this.NAME_REFRESHINTERVAL = "新消息刷新间隔";
 		this.DESC_REFRESHINTERVAL = "单位为秒";
@@ -78,6 +104,6 @@ export default class Lang {
 		this.API_ERROR   = "Messager 服务器错误:";
 		this.API_USERERR = "用户不存在。";
 
-        this.LATEST_UPDATE = "最近更新说明(v1.0.5): 增加固定标题配置项";
+        this.LATEST_UPDATE = "最近更新说明(v1.0.6@24-08-28): 增加 (配置每条内容的 前缀/后缀) 选项";
 	}
 }

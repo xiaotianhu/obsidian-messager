@@ -33,7 +33,9 @@ export default class Note {
 			for (let k in messages) {
 				let msg = messages[k] as RespMsg;
 				if (typeof msg !== "undefined" && msg.content.length > 0) {
-					await note.addNote(this.plugin.settings, msg["content"]);
+                    // process prefix/suffix if setting exists
+                    let content = this.dealPrefixOrSuffix(msg["content"])
+					await note.addNote(this.plugin.settings, content);
 				}
 			}
 		} catch (err) {
@@ -54,6 +56,8 @@ export default class Note {
             } else {
 		        fullpath = savedFolder + title;
             }
+        } else if (savedFolder.length < 1) {
+		    fullpath = title;
         } else {
 		    fullpath = savedFolder + "/" + title;
         }
@@ -65,6 +69,7 @@ export default class Note {
 					if (originFile instanceof TFile) {
 						let originData = await this.app.vault.read(originFile);
 						let newData = originData + "\n" + note;
+                        console.log("add note:", newData)
 						await this.app.vault.modify(originFile, newData);
                         return
 					} else {
@@ -74,11 +79,13 @@ export default class Note {
 					}
 				} else {
 					// file not exist, just add it 
+                console.log("add note:", note)
 					await this.app.vault.create(fullpath, note);
                     return
 				}
 			} else {
 			    // new file mode
+                console.log("add note:", note)
 				await this.app.vault.create(fullpath, note);
 			}
         
@@ -146,12 +153,32 @@ export default class Note {
 	}
 
 	// detect if file exists 
+    // file MUST NOT start with /, eg: Inbox/22-22.md  22-11.md
 	fileExists(file: string): boolean {
         let f = this.app.vault.getAbstractFileByPath(file)
-        console.log("fileExists:", f, file)
 		if (f == null) {
 			return false;
 		}
 		return f instanceof TFile;
 	}
+
+    // deal with prefix/suffix of content 
+    dealPrefixOrSuffix(note: string): string {
+        let settings = this.plugin.settings
+        // no setting
+        if (settings.contentPrefix.length == 0 && settings.contentSuffix.length == 0) {
+            return note 
+        }
+        if (settings.contentPrefix.length > 0) {
+            let prefix = this.helper.formatDateInStr(settings.contentPrefix)
+            prefix = prefix.replace(/\\n/g, '\n')
+            note = prefix + note
+        }
+        if (settings.contentSuffix.length > 0) {
+            let suffix = this.helper.formatDateInStr(settings.contentSuffix)
+            suffix = suffix.replace(/\\n/g, '\n')
+            note = note + suffix
+        }
+        return note
+    }
 }

@@ -7,6 +7,8 @@ export interface AppendPluginSettings {
 	conflictFileRule: string;
 	refreshInterval: string;
     fixedTitle: string; // not empty if conflictFileRule=fixedTitle
+    contentPrefix: string; // add prefix for each content 
+    contentSuffix: string; // add suffix for each content 
 }
 
 export default class Helper {
@@ -42,4 +44,27 @@ export default class Helper {
 			statusBarItemEl.detach();
 		}, 3000);
 	}
+
+    // format data string 
+    formatDate(format: string): string {
+        const now = new Date();
+        const tokens: { [key: string]: number } = {
+            'y': now.getFullYear(),         // 四位年份
+            'm': now.getMonth() + 1,        // 月份，0 开始所以加 1
+            'd': now.getDate(),             // 日
+            'h': now.getHours(),            // 24 小时制小时
+            'i': now.getMinutes(),          // 分钟
+            's': now.getSeconds(),          // 秒
+        };
+
+        // 辅助函数，确保所有单数字的时间值以两位数字形式显示
+        const pad = (value: number): string => value.toString().padStart(2, '0');
+        // 替换所有标记的正则表达式，确保传入pad的总是数字
+        return format.replace(/y|m|d|h|i|s/g, match => pad(tokens[match]));
+    }
+
+    // if string needed tobe formated
+    formatDateInStr(str: string): string {
+        return str.replace(/\{([^}]+)\}/g, (match, p1) => this.formatDate(p1));
+    }
 }
