@@ -166,6 +166,13 @@ export default class Note {
     dealPrefixOrSuffix(note: string): string {
         let settings = this.plugin.settings
         // no setting
+        if (typeof settings.contentPrefix == "undefined" || settings.contentPrefix == null) {
+            return note 
+        }
+        if (typeof settings.contentSuffix == "undefined" || settings.contentSuffix == null) {
+            return note 
+        }
+        // no setting
         if (settings.contentPrefix.length == 0 && settings.contentSuffix.length == 0) {
             return note 
         }
