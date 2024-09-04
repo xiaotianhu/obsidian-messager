@@ -9,6 +9,7 @@ export interface AppendPluginSettings {
     fixedTitle: string; // not empty if conflictFileRule=fixedTitle
     contentPrefix: string; // add prefix for each content 
     contentSuffix: string; // add suffix for each content 
+    insertPosition: string; // insert_before / insert_after 
 }
 
 export default class Helper {

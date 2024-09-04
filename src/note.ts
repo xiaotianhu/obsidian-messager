@@ -46,10 +46,9 @@ export default class Note {
 
 	// add note to vault
 	async addNote(setting: AppendPluginSettings, note: string) {
-        let savedFolder = setting.savedFolder
+        let savedFolder = setting.savedFolder ?? "/"
 		let title       = this.getTitle(setting, note);
         let fullpath    = ""
-
         if (savedFolder[savedFolder.length - 1] == "/") {
             if (savedFolder == "/") {
 		        fullpath = title;
@@ -63,13 +62,20 @@ export default class Note {
         }
 		try {
 			// append mode default
-			if (setting.conflictFileRule == "append" || setting.conflictFileRule.length < 1) {
+			if (setting.conflictFileRule == null ||
+                setting.conflictFileRule == "append" || 
+                setting.conflictFileRule.length < 1) {
 				if (this.fileExists(fullpath) ) {
 					let originFile = this.app.vault.getAbstractFileByPath(fullpath)
 					if (originFile instanceof TFile) {
 						let originData = await this.app.vault.read(originFile);
-						let newData = originData + "\n" + note;
-                        console.log("add note:", newData)
+                        var newData = ""
+                        if (setting.insertPosition != null && setting.insertPosition == "beginning") {
+						    newData = note + "\n" + originData;
+                        } else {
+                            // default insert at the end.
+						    newData = originData + "\n" + note;
+                        }
 						await this.app.vault.modify(originFile, newData);
                         return
 					} else {
@@ -79,13 +85,11 @@ export default class Note {
 					}
 				} else {
 					// file not exist, just add it 
-                console.log("add note:", note)
 					await this.app.vault.create(fullpath, note);
                     return
 				}
 			} else {
 			    // new file mode
-                console.log("add note:", note)
 				await this.app.vault.create(fullpath, note);
 			}
         
@@ -127,7 +131,9 @@ export default class Note {
         if (title == "") {
 			title = `${year}-${month}-${day}`;
         }
-
+        // filter special char 
+        title = this.filterTitle(title)
+        
 		// append to exist file, so no need to detect if file exists
 		if (setting.conflictFileRule != "new") {
 			return title + ".md";
@@ -165,27 +171,31 @@ export default class Note {
     // deal with prefix/suffix of content 
     dealPrefixOrSuffix(note: string): string {
         let settings = this.plugin.settings
-        // no setting
-        if (typeof settings.contentPrefix == "undefined" || settings.contentPrefix == null) {
-            return note 
+        if (settings.contentPrefix != null) {
+            if (settings.contentPrefix.length > 0) {
+                let prefix = this.helper.formatDateInStr(settings.contentPrefix)
+                prefix = prefix.replace(/\\n/g, '\n')
+                note = prefix + note
+            }
         }
-        if (typeof settings.contentSuffix == "undefined" || settings.contentSuffix == null) {
-            return note 
+        if (settings.contentSuffix != null) {
+            if (settings.contentSuffix.length > 0) {
+                let suffix = this.helper.formatDateInStr(settings.contentSuffix)
+                suffix = suffix.replace(/\\n/g, '\n')
+                note = note + suffix
+            }
         }
-        // no setting
-        if (settings.contentPrefix.length == 0 && settings.contentSuffix.length == 0) {
-            return note 
-        }
-        if (settings.contentPrefix.length > 0) {
-            let prefix = this.helper.formatDateInStr(settings.contentPrefix)
-            prefix = prefix.replace(/\\n/g, '\n')
-            note = prefix + note
-        }
-        if (settings.contentSuffix.length > 0) {
-            let suffix = this.helper.formatDateInStr(settings.contentSuffix)
-            suffix = suffix.replace(/\\n/g, '\n')
-            note = note + suffix
-        }
+
         return note
+    }
+
+    // filter title special char 
+    filterTitle(title: string): string {
+        const validChars = title.match(/[a-zA-Z0-9\u4e00-\u9fa5+-_.@]+/g);
+        if (!validChars) {
+            return 'undefined';
+        }
+        let newTitle = validChars.join('');
+        return newTitle.replace(/[/\\^:]/g, "")
     }
 }

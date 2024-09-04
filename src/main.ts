@@ -57,6 +57,7 @@ export default class AppendPlugin extends Plugin {
                 await note.getAndSaveMessage(false);
             } catch(err) {
                console.error("Messager plugin err:", err); 
+               sleep(interval)
             }
 		}, interval));
 	}

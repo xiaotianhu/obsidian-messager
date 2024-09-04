@@ -13,6 +13,11 @@ export default class Lang {
 	DESC_FILENAME: string         = "Rule of added filename when received messages";
 	FILENAME_RULE_CONTENT: string = "First line of message";
 
+    INSERT_POSITION: string = "Insert new message at position";
+    INSERT_POSITION_DESC: string = "Insert new message at the beginning or the end";
+    INSERT_POSITION_BEGIN: string = "Beginning of the file";
+    INSERT_POSITION_END: string = "End of the file";
+
 	NAME_CONFLICTFILE: string   = "Conflict filename rule";
     TITLE_FIXED: string = "fixed title";
     SET_TITLE_FIXED: string = "set fixed title";
@@ -47,7 +52,7 @@ Supports date variables (must be enclosed in curly braces), supports using \\n f
 	ERROR: string       = "Messager error:";
 	API_ERROR: string   = "Messager server response error:";
 	API_USERERR: string = "API key not found, user not exist.";
-    LATEST_UPDATE: string = "Latest update(v1.0.6@24-08-28): Add prefix/suffix settings.";
+    LATEST_UPDATE: string = "Latest update(v1.0.8@24-09-04): Add new message insert position settings.";
 	constructor() {
         let lang = window.localStorage.getItem('language');
         if (lang == "zh" || lang == "zh-cn" || lang == "zh-TW") {
@@ -68,6 +73,11 @@ Supports date variables (must be enclosed in curly braces), supports using \\n f
 		this.NAME_FILENAME         = "文件名规则";
 		this.DESC_FILENAME         = "收到新消息时保存文件的名字规则";
 		this.FILENAME_RULE_CONTENT = "消息首行内容";
+        
+        this.INSERT_POSITION       = "新消息的插入位置";
+        this.INSERT_POSITION_DESC  = "新消息插入在文档开始或结束位置";
+        this.INSERT_POSITION_BEGIN = "文件头部";
+        this.INSERT_POSITION_END   = "文件尾部";
 
 		this.NAME_CONFLICTFILE   = "文件名已存在时处理规则";
         this.SET_TITLE_FIXED     = "设置固定标题";
@@ -104,6 +114,6 @@ Supports date variables (must be enclosed in curly braces), supports using \\n f
 		this.API_ERROR   = "Messager 服务器错误:";
 		this.API_USERERR = "用户不存在。";
 
-        this.LATEST_UPDATE = "最近更新说明(v1.0.6@24-08-28): 增加 (配置每条内容的 前缀/后缀) 选项";
+        this.LATEST_UPDATE = "最近更新说明(v1.0.8@24-09-04): 增加 新消息插入位置 选项";
 	}
 }

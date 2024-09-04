@@ -136,7 +136,26 @@ export class AppendSettingTab extends PluginSettingTab {
 				await this.plugin.saveSettings();
 			})
 		);
+		
+        // insert new message position: insert_before/insert_after
+		new Setting(containerEl)
+		.setName(this.lang.INSERT_POSITION)
+		.setDesc(this.lang.INSERT_POSITION_DESC)
+		.addDropdown(dropdown => {
+			dropdown.addOption("beginning", this.lang.INSERT_POSITION_BEGIN);
+			dropdown.addOption("ending", this.lang.INSERT_POSITION_END);
 
+			if (this.plugin.settings.insertPosition == null) {
+				dropdown.setValue("ending");
+			} else {
+				dropdown.setValue(this.plugin.settings.insertPosition);
+			}
+
+			dropdown.onChange(async (value) => {
+				this.plugin.settings.insertPosition = value;
+				await this.plugin.saveSettings();
+			});
+		});
 
 		// refresh interval
 		new Setting(containerEl)
