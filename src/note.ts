@@ -124,7 +124,7 @@ export default class Note {
 		}
 
         if (setting.filenameRule == "fixed" && setting.fixedTitle.length > 0) {
-            title = setting.fixedTitle
+            title = this.helper.formatDateInStr(setting.fixedTitle)
         }
 
         // if title is empty, give it a default name

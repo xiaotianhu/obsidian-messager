@@ -19,8 +19,8 @@ export default class Lang {
     INSERT_POSITION_END: string = "End of the file";
 
 	NAME_CONFLICTFILE: string   = "Conflict filename rule";
-    TITLE_FIXED: string = "fixed title";
-    SET_TITLE_FIXED: string = "set fixed title";
+    TITLE_FIXED: string = "fixed title(supports date variables)";
+    SET_TITLE_FIXED: string = "set fixed title, supports timestamp variables, see the instructions below";
     TITLE_FIXED_DESC: string = "Set a fixed file name without needing to include the .md file extension.";
     TITLE_FIXED_ERR: string = "Fixed title error:";
 	DESC_CONFLICTFILE: string   = "How to deal when filename already existed";
@@ -31,12 +31,12 @@ export default class Lang {
     SUFFIX_TITLE: string = "Add suffix for each content";
     SUFFIX_DESC: string = "Supports timestamp variables, see the instructions below for details";
     SUFFIX_PREFIX_USAGE: string = `
-Prefix/Suffix Configuration Usage:
-Supports date variables (must be enclosed in curly braces), supports using \\n for new lines
-{y-m-d h:i:s} corresponds to year-month-day hour:minute:second
+Prefix/Suffix/Fixed title configuration usage:
+Supports date variables (must be enclosed in curly braces), prefix/suffix supports using \\n for new lines
+{y-m-d h:i:s W w} corresponds to year-month-day hour:minute:second Sunday Sun
   For example:
-  "date@{y-m-d}"
-  "{ymd@h:i} \\n"
+  "date@{y-m-d-W}"
+  "{ymd@h:i w} \\n"
   "{y-m-d h:i:s} \\n --- \\n"
 `
 
@@ -52,7 +52,11 @@ Supports date variables (must be enclosed in curly braces), supports using \\n f
 	ERROR: string       = "Messager error:";
 	API_ERROR: string   = "Messager server response error:";
 	API_USERERR: string = "API key not found, user not exist.";
-    LATEST_UPDATE: string = "Latest update(v1.0.8@24-09-04): Add new message insert position settings.";
+    LATEST_UPDATE: string = `
+UpdateNotes:
+    (v1.0.9@24-09-07): Support date variables for fixed title.
+    (v1.0.8@24-09-04): Add new message insert position settings.
+`
 	constructor() {
         let lang = window.localStorage.getItem('language');
         if (lang == "zh" || lang == "zh-cn" || lang == "zh-TW") {
@@ -81,8 +85,8 @@ Supports date variables (must be enclosed in curly braces), supports using \\n f
 
 		this.NAME_CONFLICTFILE   = "文件名已存在时处理规则";
         this.SET_TITLE_FIXED     = "设置固定标题";
-        this.TITLE_FIXED_DESC    = "设置固定的文件名，不需要包含 .md 后缀";
-        this.TITLE_FIXED         = "固定标题";
+        this.TITLE_FIXED_DESC    = "设置固定的文件名，不需要包含 .md 后缀;支持时间戳变量，具体参考下方说明";
+        this.TITLE_FIXED         = "固定标题(支持时间戳变量)";
         this.TITLE_FIXED_ERR     = "固定标题设置错误：";
 		this.DESC_CONFLICTFILE   = "当文件名已经存在时如何处理";
 		this.CONFLICTFILE_NEW    = "创建新文件";
@@ -92,12 +96,12 @@ Supports date variables (must be enclosed in curly braces), supports using \\n f
         this.SUFFIX_TITLE        = "为每条内容添加后缀";
         this.SUFFIX_DESC         = "支持时间戳变量，具体参考下方说明";
         this.SUFFIX_PREFIX_USAGE = 
-`前缀/后缀配置用法： 
-支持日期变量(需要用花括号括起来)，支持用 \\n 换行
-{y-m-d h:i:s} 对应 年-月-日 时:分:秒 
+`前缀/后缀/固定文件名 时间戳变量用法说明： 
+日期变量(需要用花括号括起来)，前缀/后缀支持用 \\n 换行(文件名不支持)
+{y-m-d h:i:s W w} 对应 年-月-日 时:分:秒 星期六(大写W) 周六(小写w)
   例如: 
-  "日期@{y-m-d}"
-  "{ymd@h:i} \\n"
+  "日期@{y-m-d-W}"
+  "{ymd@h:i_w} \\n"
   "{y-m-d h:i:s} \\n --- \\n"
 `
 	
@@ -114,6 +118,10 @@ Supports date variables (must be enclosed in curly braces), supports using \\n f
 		this.API_ERROR   = "Messager 服务器错误:";
 		this.API_USERERR = "用户不存在。";
 
-        this.LATEST_UPDATE = "最近更新说明(v1.0.8@24-09-04): 增加 新消息插入位置 选项";
+        this.LATEST_UPDATE = `
+更新记录：
+(v1.0.9@24-09-07): 固定标题支持使用时间戳变量。
+(v1.0.8@24-09-04): 增加 新消息插入位置 选项。
+`
 	}
 }

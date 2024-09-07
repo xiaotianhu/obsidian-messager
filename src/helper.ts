@@ -47,7 +47,8 @@ export default class Helper {
 	}
 
     // format data string 
-    formatDate(format: string): string {
+    // lang: cn / en
+    formatDate(format: string, lang: string = "cn"): string {
         const now = new Date();
         const tokens: { [key: string]: number } = {
             'y': now.getFullYear(),         // 四位年份
@@ -56,12 +57,27 @@ export default class Helper {
             'h': now.getHours(),            // 24 小时制小时
             'i': now.getMinutes(),          // 分钟
             's': now.getSeconds(),          // 秒
+            'w': now.getDay(),              // 星期，0是星期日
+        };
+        // 星期替换
+        const weekdays = {
+            cn: ['日', '一', '二', '三', '四', '五', '六'],
+            en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
         };
 
         // 辅助函数，确保所有单数字的时间值以两位数字形式显示
         const pad = (value: number): string => value.toString().padStart(2, '0');
         // 替换所有标记的正则表达式，确保传入pad的总是数字
-        return format.replace(/y|m|d|h|i|s/g, match => pad(tokens[match]));
+        //return format.replace(/y|m|d|h|i|s/g, match => pad(tokens[match]));
+        return format.replace(/y|m|d|h|i|s|w|W/g, match => {
+            if (match === 'w') {
+                return lang === 'cn' ? "周"+weekdays.cn[tokens.w as number] : weekdays.en[tokens.w as number].slice(0, 3);
+            }
+            if (match === 'W') {
+                return lang === 'cn' ? `星期${weekdays.cn[tokens.w as number]}` : weekdays.en[tokens.w as number];
+            }
+            return pad(tokens[match] as number);
+        });
     }
 
     // if string needed tobe formated
