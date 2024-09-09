@@ -1,8 +1,8 @@
 import { App, Plugin, TFolder, TAbstractFile } from 'obsidian';
 
 export default class Lang {
-	NAME_APIKEY: string = "API key";
-	DESC_APIKEY: string = "Get API key from wxob.pipebox.pro";
+	NAME_APIKEY: string = "API Key";
+	DESC_APIKEY: string = "Get API key from wechatobsidian.com";
 	PH_APIKEY: string   = "Enter your API key";
     MORE_DESC:string    = "For more usage methods, to register a new account, or to provide feedback, please visit:";
 
@@ -54,6 +54,7 @@ Supports date variables (must be enclosed in curly braces), prefix/suffix suppor
 	API_USERERR: string = "API key not found, user not exist.";
     LATEST_UPDATE: string = `
 UpdateNotes:
+    (v1.1.0@24-09-09): Fix bugs.
     (v1.0.9@24-09-07): Support date variables for fixed title.
     (v1.0.8@24-09-04): Add new message insert position settings.
 `
@@ -66,8 +67,8 @@ UpdateNotes:
 	
 	// load chinese lang 
 	loadChineseLang() {
-		this.NAME_APIKEY = "API key";
-		this.DESC_APIKEY = "前往wxob.pipebox.pro获取API key";
+		this.NAME_APIKEY = "API Key";
+		this.DESC_APIKEY = "前往wechatobsidian.com获取API key";
 		this.PH_APIKEY   = "请输入API key";
         this.MORE_DESC   = "更多使用方法，注册新账户，意见反馈等 请访问:";
 
@@ -120,6 +121,7 @@ UpdateNotes:
 
         this.LATEST_UPDATE = `
 更新记录：
+(v1.1.0@24-09-09): Fix bugs.
 (v1.0.9@24-09-07): 固定标题支持使用时间戳变量。
 (v1.0.8@24-09-04): 增加 新消息插入位置 选项。
 `
