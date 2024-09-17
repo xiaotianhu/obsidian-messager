@@ -5,8 +5,10 @@ import Lang from './lang';
 import Message from './message';
 
 interface RespMsg {
+    title: string
 	content: string
 	id: number
+    createdAt: number
 }
 
 export default class Note {
@@ -32,10 +34,15 @@ export default class Note {
 			let messages = await (new Message).getMessage(this.plugin.settings.apikey, isVerify);
 			for (let k in messages) {
 				let msg = messages[k] as RespMsg;
+
 				if (typeof msg !== "undefined" && msg.content.length > 0) {
                     // process prefix/suffix if setting exists
-                    let content = this.dealPrefixOrSuffix(msg["content"])
-					await note.addNote(this.plugin.settings, content);
+                    let content = this.dealPrefixOrSuffix(msg["content"], msg["createdAt"])
+                    let title = msg["title"]
+                    if (title.length > 1) {
+                        title = this.filterTitle(title) + ".md"
+                    }
+					await note.addNote(this.plugin.settings, content, title, msg["createdAt"]);
 				}
 			}
 		} catch (err) {
@@ -45,9 +52,11 @@ export default class Note {
 	}
 
 	// add note to vault
-	async addNote(setting: AppendPluginSettings, note: string) {
+	async addNote(setting: AppendPluginSettings, note: string, title: string, created: number) {
         let savedFolder = setting.savedFolder ?? "/"
-		let title       = this.getTitle(setting, note);
+        if (title.length < 1) {
+		    title = this.getTitle(setting, note, created);
+        }
         let fullpath    = ""
         if (savedFolder[savedFolder.length - 1] == "/") {
             if (savedFolder == "/") {
@@ -101,7 +110,7 @@ export default class Note {
 	}
 
 	// generate title 
-	getTitle(setting: AppendPluginSettings, note: string): string {
+	getTitle(setting: AppendPluginSettings, note: string, created: number): string {
 		let title = "";
 		let date  = new Date();
         const year  = date.getFullYear();
@@ -124,7 +133,7 @@ export default class Note {
 		}
 
         if (setting.filenameRule == "fixed" && setting.fixedTitle.length > 0) {
-            title = this.helper.formatDateInStr(setting.fixedTitle)
+            title = this.helper.formatDateInStr(setting.fixedTitle, created)
         }
 
         // if title is empty, give it a default name
@@ -169,18 +178,18 @@ export default class Note {
 	}
 
     // deal with prefix/suffix of content 
-    dealPrefixOrSuffix(note: string): string {
+    dealPrefixOrSuffix(note: string, created: number): string {
         let settings = this.plugin.settings
         if (settings.contentPrefix != null) {
             if (settings.contentPrefix.length > 0) {
-                let prefix = this.helper.formatDateInStr(settings.contentPrefix)
+                let prefix = this.helper.formatDateInStr(settings.contentPrefix, created)
                 prefix = prefix.replace(/\\n/g, '\n')
                 note = prefix + note
             }
         }
         if (settings.contentSuffix != null) {
             if (settings.contentSuffix.length > 0) {
-                let suffix = this.helper.formatDateInStr(settings.contentSuffix)
+                let suffix = this.helper.formatDateInStr(settings.contentSuffix, created)
                 suffix = suffix.replace(/\\n/g, '\n')
                 note = note + suffix
             }
@@ -191,6 +200,7 @@ export default class Note {
 
     // filter title special char 
     filterTitle(title: string): string {
+        if (title.length < 1) { return "" }
         const validChars = title.match(/[a-zA-Z0-9\u4e00-\u9fa5+-_.@]+/g);
         if (!validChars) {
             return 'undefined';

@@ -47,9 +47,14 @@ export default class Helper {
 	}
 
     // format data string 
-    // lang: cn / en
-    formatDate(format: string, lang: string = "cn"): string {
-        const now = new Date();
+    // lang: cn / en  created: unix timestamp in seconds
+    formatDate(format: string, lang: string = "cn", created: number = 0): string {
+        let now: Date
+        if (created < 1) {
+            now = new Date()
+        } else {
+            now = new Date(created * 1000);
+        }
         const tokens: { [key: string]: number } = {
             'y': now.getFullYear(),         // 四位年份
             'm': now.getMonth() + 1,        // 月份，0 开始所以加 1
@@ -59,7 +64,7 @@ export default class Helper {
             's': now.getSeconds(),          // 秒
             'w': now.getDay(),              // 星期，0是星期日
         };
-        // 星期替换
+
         const weekdays = {
             cn: ['日', '一', '二', '三', '四', '五', '六'],
             en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -67,7 +72,6 @@ export default class Helper {
 
         // 辅助函数，确保所有单数字的时间值以两位数字形式显示
         const pad = (value: number): string => value.toString().padStart(2, '0');
-        // 替换所有标记的正则表达式，确保传入pad的总是数字
         //return format.replace(/y|m|d|h|i|s/g, match => pad(tokens[match]));
         return format.replace(/y|m|d|h|i|s|w|W/g, match => {
             if (match === 'w') {
@@ -81,7 +85,17 @@ export default class Helper {
     }
 
     // if string needed tobe formated
-    formatDateInStr(str: string): string {
-        return str.replace(/\{([^}]+)\}/g, (match, p1) => this.formatDate(p1));
+    formatDateInStr(str: string, createdAt: number): string {
+        let lang = this.detectLang()
+        return str.replace(/\{([^}]+)\}/g, (match, p1) => this.formatDate(p1, lang, createdAt));
+    }
+
+    // detect language, returns  cn or en 
+    detectLang(): string {
+        let lang = window.localStorage.getItem('language');
+        if (lang == "zh" || lang == "zh-cn" || lang == "zh-TW") {
+		    return "cn"
+        } 
+        return "en"
     }
 }
