@@ -301,7 +301,7 @@ export default class Note {
             pluginPath = ""
         }
         // system's config of saved file path 
-        let systemPath = app.vault.getConfig('attachmentFolderPath');
+        let systemPath = (this.app.vault as any).getConfig('attachmentFolderPath');
         if (systemPath == null || systemPath.length < 1) {
             return [pluginPath + "/" + fileName, fileName]
         }
