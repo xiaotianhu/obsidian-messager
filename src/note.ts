@@ -261,26 +261,31 @@ export default class Note {
             return msg
         }
         let imgData = new Uint8Array(resp.arrayBuffer)
-        let imgInfo = this.checkImageExistence(this.getImageSavedPath(setting, url))
+        let imgInfo = this.checkImageExistence(await this.getImageSavedPath(setting, url))
         let imgPath = imgInfo[0] 
         let imgName = imgInfo[1]
         if (imgPath == null || imgPath == "" || imgName == null || imgName == "") {
             console.error("save image to local err, imgPath or imgName empty:", imgPath, imgName)
             return msg
         }
-        const file = await this.app.vault.createBinary(imgPath, imgData);
-        if (file == null || typeof file.basename == "undefined" || file.basename.length < 1) {
-            console.error("vault.createBinary err,file not saved.")
+        try {
+            const file = await this.app.vault.createBinary(imgPath, imgData);
+            if (file == null || typeof file.basename == "undefined" || file.basename.length < 1) {
+                console.error("vault.createBinary err,file not saved.")
+                return msg
+            }
+            // save success, return local file link 
+            let localMsg = "![[" + imgPath + "|400]]";
+            return localMsg
+        } catch (err) {
+            console.error("saveImage createBinary err:", err)
             return msg
         }
-        // save success, return local file link 
-        let localMsg = "![[" + imgPath + "|400]]";
-        return localMsg
     }
     
     // get image saved path
     // @return  [pathWithImgName: var/to/folder/a.jpg or "a.jpg", fileName]
-    getImageSavedPath(setting: AppendPluginSettings, url: string): [string, string] {
+    async getImageSavedPath(setting: AppendPluginSettings, url: string): Promise<[string, string]> {
         let fileName = ""
         // get filename from url
         let urlObj = new URL(url) 
@@ -300,19 +305,22 @@ export default class Note {
         if (systemPath == null || systemPath.length < 1) {
             return [pluginPath + "/" + fileName, fileName]
         }
-        // 附件保存到当前目录
+        // option: save at current folder
         if (systemPath == "./") {
             return [pluginPath + "/" + fileName, fileName]
         }
-        // 附件保存到根目录
+        // option: save at root folder
         if (systemPath == "/") {
             return [fileName, fileName]
         }
-        // 附件保存到当前目录下的子目录
-        if (systemPath.substr(0, 2) == "./") {
+        // option: save to current's child folder
+        if (systemPath.length > 2 && systemPath.substr(0, 2) == "./") {
+            systemPath = systemPath.substring(2) // turn folder ./abc -> abc
             if (pluginPath == "") {
+                await this.checkAndCreateFolder(systemPath)
                 return [systemPath + "/" + fileName, fileName]
             } else {
+                await this.checkAndCreateFolder(pluginPath + "/" + systemPath)
                 return [pluginPath + "/" + systemPath + "/" + fileName, fileName]
             }
         } else {
@@ -335,5 +343,15 @@ export default class Note {
         let newFile = this.helper.now().toString() + fileName
         let newPath = path.replace(fileName, newFile)
         return [newPath, newFile]
+    }
+
+    // create folder if not exist 
+    async checkAndCreateFolder(folder: string) {
+        let exist = await this.app.vault.adapter.exists(folder)
+        if (exist) {
+            return
+        }
+        // not exist,need tobe created
+        let tf = await this.app.vault.createFolder(folder)
     }
 }
