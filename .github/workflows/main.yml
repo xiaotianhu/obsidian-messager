@@ -1,0 +1,24 @@
+name: AI Code Reviewer
+
+on:
+  push:
+    branches:
+      - main
+
+permissions: write-all
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: AI Code Reviewer
+        uses: xiaotianhu/ai-codereviewer@main
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.API2D_KEY }}
+          OPENAI_API_URL: "https://openai.api2d.net"
+          OPENAI_API_MODEL: "gpt-4o-mini" # Optional: defaults to "gpt-4"
+          exclude: "**/*.json, **/*.md" # Optional: exclude patterns separated by commas
