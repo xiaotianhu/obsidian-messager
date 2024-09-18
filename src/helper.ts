@@ -98,4 +98,8 @@ export default class Helper {
         } 
         return "en"
     }
+
+    now(): number {
+        return Math.floor(Date.now() / 1000);
+    }
 }
