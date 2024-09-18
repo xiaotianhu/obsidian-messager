@@ -12,18 +12,20 @@ jobs:
   review:
     runs-on: ubuntu-latest
     steps:
-	- name: Checkout Repo
-  		uses: actions/checkout@v3
-	- name: Get latest AI Code Reviewer action
-	  run: |
-		git clone https://github.com/xiaotianhu/ai-codereviewer.git
-		cd ai-codereviewer
-		git checkout main
-		git pull
-	- name: AI Code Reviewer
-	  uses: ./ai-codereviewer
-	  with:
-		GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-		OPENAI_API_KEY: ${{ secrets.API2D_KEY }}
-		OPENAI_API_MODEL: "gpt-4o-mini"
-		exclude: "**/*.json, **/*.md"
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+	  - name: Get latest AI Code Reviewer action
+	    run: |
+          git clone https://github.com/xiaotianhu/ai-codereviewer.git
+		  cd ai-codereviewer
+          git checkout main
+          git pull
+
+      - name: AI Code Reviewer
+        uses: ./ai-codereviewer
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.API2D_KEY }}
+          OPENAI_API_MODEL: "gpt-4o-mini" 
+          exclude: "**/*.json, **/*.md" 
