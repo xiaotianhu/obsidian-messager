@@ -234,6 +234,11 @@ export default class Note {
             return false
 		}
 		let url = match[1]
+        // wechat url 
+        if (url.indexOf("mmbiz.qpic.cn") > 0) {
+            return true
+        }
+
 		// get suffix of file
 		let suffix = url.substr(-3, 3)
         if (imageSuffix.indexOf(suffix) >= 0) {
@@ -295,6 +300,9 @@ export default class Note {
         } else {
             fileName = urlPath.substring(urlPath.lastIndexOf("/") + 1)
         }
+        if (fileName.indexOf(".") < 0) {
+            fileName = fileName + ".jpg"
+        }
 
         let pluginPath = setting.savedFolder ?? ""
         if (pluginPath == "/") { 
@@ -307,7 +315,11 @@ export default class Note {
         }
         // option: save at current folder
         if (systemPath == "./") {
-            return [pluginPath + "/" + fileName, fileName]
+            if (pluginPath == "") {
+                return [fileName, fileName]
+            } else {
+                return [pluginPath + "/" + fileName, fileName]
+            }
         }
         // option: save at root folder
         if (systemPath == "/") {
