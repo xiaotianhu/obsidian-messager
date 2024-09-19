@@ -19,6 +19,6 @@ jobs:
         uses: xiaotianhu/ai-codereviewer@main
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OPENAI_API_KEY: "fk196233-nVJ041htfC7FwtasKrFzbyRKX2E9JmLa"
+          OPENAI_API_KEY: ${{ secrets.API2D_KEY }}
           OPENAI_API_MODEL: "gpt-4o-mini" 
           exclude: "**/*.json, **/*.md" 
