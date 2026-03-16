@@ -56,6 +56,9 @@ Supports date variables (must be enclosed in curly braces), prefix/suffix suppor
     CHOOSE_TEMPLATE = "Choose Template(Only first message will use)"
     CHOOSE_TEMPLATE_DESC = "Only first message of new file will use"
 
+    FETCH_WECHAT_ARTICLE_CONTENT = "Fetch WeChat article full content"
+    FETCH_WECHAT_ARTICLE_CONTENT_DESC = "Automatically fetch and save the full content of WeChat official account articles"
+
     LATEST_UPDATE: string = `
 UpdateNotes:
     (v1.1.5@25-05-18): Fix Save Email's attach
@@ -125,6 +128,9 @@ UpdateNotes:
    
         this.CHOOSE_TEMPLATE = "选择要使用的模板"
         this.CHOOSE_TEMPLATE_DESC = "同一个文件只有首条信息会使用模板"
+
+        this.FETCH_WECHAT_ARTICLE_CONTENT = "获取微信公众号全文内容"
+        this.FETCH_WECHAT_ARTICLE_CONTENT_DESC = "自动获取并保存微信公众号文章的完整内容"
 
         this.LATEST_UPDATE = `
 更新记录：

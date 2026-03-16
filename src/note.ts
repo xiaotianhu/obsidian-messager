@@ -3,6 +3,7 @@ import AppendPlugin from './main';
 import Helper,{ AppendPluginSettings } from "./helper";
 import Lang from './lang';
 import Message from './message';
+import WxArticleService from './wxarticle_service';
 
 interface RespMsg {
     title: string
@@ -47,6 +48,15 @@ export default class Note {
                 }
                 // save email's img to local 
                 content = await this.parseEmailContent(content)
+
+                // fetch WeChat article content if enabled and content is a single WeChat link
+                if (this.plugin.settings.fetchWechatArticleContent && this.isSingleWeChatLink(content)) {
+                    const wxService = new WxArticleService(this.app, this.plugin);
+                    const articleContent = await wxService.processMessage(content);
+                    if (articleContent) {
+                        content = articleContent;
+                    }
+                }
 
                 let title = msg["title"];
                 if (title != null && title.length > 1) {
@@ -489,6 +499,53 @@ export default class Note {
         }
         
         return content
+    }
+
+    /**
+     * Check if content is a single WeChat article link
+     * Returns true if content contains only a WeChat article URL (mp.weixin.qq.com)
+     */
+    isSingleWeChatLink(content: string): boolean {
+        if (!content || content.trim().length < 1) {
+            return false;
+        }
+
+        content = content.trim();
+
+        // Try to extract URL from markdown format [text](url)
+        const markdownUrlRegex = /^\[.*?\]\s*\((https?:\/\/[^\s)]+)\)$/;
+        let match = content.match(markdownUrlRegex);
+        if (match && match[1]) {
+            return match[1].includes('mp.weixin.qq.com');
+        }
+
+        // Try to extract URL from plain text
+        const plainUrlRegex = /^(https?:\/\/[^\s\n]+)$/;
+        match = content.match(plainUrlRegex);
+        if (match && match[1]) {
+            return match[1].includes('mp.weixin.qq.com');
+        }
+
+        // Check if content contains other text besides URL
+        // Remove markdown URLs and plain URLs, check if anything remains
+        const cleanContent = content
+            .replace(/\[.*?\]\s*\(https?:\/\/[^\s)]+\)/g, '')
+            .replace(/https?:\/\/[^\s\n]+/g, '')
+            .trim();
+        
+        // If there's other text content, not a single link
+        if (cleanContent.length > 0) {
+            return false;
+        }
+
+        // Extract any URL and check if it's WeChat
+        const anyUrlRegex = /(https?:\/\/[^\s\n]+)/;
+        match = content.match(anyUrlRegex);
+        if (match && match[1]) {
+            return match[1].includes('mp.weixin.qq.com');
+        }
+
+        return false;
     }
 
 

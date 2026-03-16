@@ -27,6 +27,10 @@ export default class AppendPlugin extends Plugin {
 		let oriData: AppendPluginSettings = await this.loadData()
 		if (oriData != null && typeof oriData.apikey != 'undefined' && oriData.apikey.length > 1) {
 			this.settings = Object.assign({}, oriData);
+			// Ensure new settings have default values for backward compatibility
+			if (typeof this.settings.fetchWechatArticleContent === 'undefined') {
+				this.settings.fetchWechatArticleContent = true;
+			}
 		} else {
 			const defaultConf: AppendPluginSettings = {
 				apikey: "",
@@ -38,7 +42,8 @@ export default class AppendPlugin extends Plugin {
                 insertPosition: "",
                 contentSuffix: "",
                 contentPrefix: "",
-                templateName: ""
+                templateName: "",
+				fetchWechatArticleContent: true
 			}
 			this.settings = defaultConf;
 		}

@@ -199,6 +199,18 @@ export class AppendSettingTab extends PluginSettingTab {
 			});
 		});
 
+		// fetch wechat article content toggle
+		new Setting(containerEl)
+		.setName(this.lang.FETCH_WECHAT_ARTICLE_CONTENT)
+		.setDesc(this.lang.FETCH_WECHAT_ARTICLE_CONTENT_DESC)
+		.addToggle(toggle => toggle
+			.setValue(this.plugin.settings.fetchWechatArticleContent ?? false)
+			.onChange(async (value) => {
+				this.plugin.settings.fetchWechatArticleContent = value;
+				await this.plugin.saveSettings();
+			})
+		);
+
 		// verify apiKey button
 		new Setting(containerEl)
 		.setName(this.lang.NAME_VERIFYBTN)

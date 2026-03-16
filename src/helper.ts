@@ -11,6 +11,7 @@ export interface AppendPluginSettings {
     contentSuffix: string; // add suffix for each content 
     insertPosition: string; // insert_before / insert_after 
     templateName: string; // use template's name 
+    fetchWechatArticleContent: boolean; // fetch full wechat article content
 }
 
 export default class Helper {
