@@ -52,9 +52,10 @@ export default class Note {
                 // fetch WeChat article content if enabled and content is a single WeChat link
                 if (this.plugin.settings.fetchWechatArticleContent && this.isSingleWeChatLink(content)) {
                     const wxService = new WxArticleService(this.app, this.plugin);
-                    const articleContent = await wxService.processMessage(content);
-                    if (articleContent) {
-                        content = articleContent;
+                    const articleResult = await wxService.processMessage(content);
+                    if (articleResult && articleResult.content) {
+                        await note.saveWxArticleToNewFile(articleResult.title, articleResult.content, msg["createdAt"]);
+                        continue;
                     }
                 }
 
@@ -499,6 +500,62 @@ export default class Note {
         }
         
         return content
+    }
+
+    // save WeChat article to a new file using the article title as filename
+    async saveWxArticleToNewFile(articleTitle: string, content: string, created: number) {
+        const settings = this.plugin.settings;
+
+        let fileName = this.filterWxArticleTitle(articleTitle);
+        if (!fileName || fileName.length < 1) {
+            const d = new Date();
+            fileName = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
+        }
+
+        let savedFolder = settings.savedFolder ?? "/";
+
+        const buildPath = (name: string): string => {
+            if (savedFolder === "/" || savedFolder.length < 1) {
+                return name + ".md";
+            }
+            const sep = savedFolder.endsWith("/") ? "" : "/";
+            return savedFolder + sep + name + ".md";
+        };
+
+        let fullpath = buildPath(fileName);
+        if (this.fileExists(fullpath)) {
+            for (let i = 0; i <= 1000; i++) {
+                const candidate = buildPath(fileName + "(" + i + ")");
+                if (!this.fileExists(candidate)) {
+                    fullpath = candidate;
+                    break;
+                }
+            }
+        }
+
+        content = this.dealPrefixOrSuffix(content, created);
+
+        try {
+            const newFile = await this.app.vault.create(fullpath, content);
+            const leaf = this.app.workspace.getLeaf(true);
+            await leaf.openFile(newFile as TFile);
+            if (this.plugin.settings.templateName != null &&
+                this.plugin.settings.templateName.length > 1) {
+                await this.insertTemplate();
+            }
+            this.helper.addStatus("wx article saved: " + fullpath, this.plugin);
+        } catch (err) {
+            console.error("saveWxArticleToNewFile err:", err);
+            new Notice(this.lang.ERROR + "file:" + fullpath + " err:" + err);
+        }
+    }
+
+    // filter WeChat article title: only keep Chinese/English/numbers
+    filterWxArticleTitle(title: string): string {
+        if (!title || title.length < 1) { return ""; }
+        const validChars = title.match(/[a-zA-Z0-9\u4e00-\u9fa5]+/g);
+        if (!validChars) { return ""; }
+        return validChars.join("");
     }
 
     /**

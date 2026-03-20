@@ -1,7 +1,12 @@
-import { App, Notice, requestUrl, TFile } from 'obsidian';
+import { App, requestUrl } from 'obsidian';
 import AppendPlugin from './main';
 import Helper from "./helper";
 import Lang from './lang';
+
+export interface WxArticleResult {
+	title: string;
+	content: string;
+}
 
 /**
  * WeChat Article Service
@@ -59,7 +64,7 @@ export default class WxArticleService {
 	/**
 	 * Fetch WeChat article content and convert to Markdown
 	 */
-	async fetchArticle(url: string): Promise<string | null> {
+	async fetchArticle(url: string): Promise<WxArticleResult | null> {
 		try {
 			const response = await requestUrl({
 				url: url,
@@ -85,21 +90,21 @@ export default class WxArticleService {
 	/**
 	 * Parse HTML content to Markdown
 	 */
-	private parseHtmlToMarkdown(html: string, baseUrl: string): string {
+	private parseHtmlToMarkdown(html: string, baseUrl: string): WxArticleResult {
 		// Create a temporary DOM element to parse HTML
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(html, 'text/html');
 
 		// Extract article title - try multiple selectors
 		let title = '';
-		const titleEl = doc.querySelector('h2.rich_media_title') || 
-						doc.querySelector('.rich_media_title') || 
+		const titleEl = doc.querySelector('h2.rich_media_title') ||
+						doc.querySelector('.rich_media_title') ||
 						doc.querySelector('h1.title') ||
 						doc.querySelector('#activity_name');
 		if (titleEl) {
 			title = titleEl.textContent?.trim() || '';
 		}
-		
+
 		// Fallback to meta tag
 		if (!title) {
 			const metaTitle = doc.querySelector('meta[property="og:title"]');
@@ -112,7 +117,7 @@ export default class WxArticleService {
 		const contentEl = doc.querySelector('#js_content');
 		if (!contentEl) {
 			console.error('Could not find article content in HTML');
-			return '';
+			return { title, content: '' };
 		}
 
 		// Convert HTML to Markdown
@@ -128,7 +133,7 @@ export default class WxArticleService {
 		// Add source information
 		markdown += `\n\n---\n*Source: [WeChat Article](${baseUrl})*`;
 
-		return markdown;
+		return { title, content: markdown };
 	}
 
 	/**
@@ -433,9 +438,9 @@ export default class WxArticleService {
 
 	/**
 	 * Main method to process a message containing WeChat article URL
-	 * Returns the processed markdown content or null if not a WeChat article
+	 * Returns {title, content} or null if not a WeChat article or fetch failed
 	 */
-	async processMessage(content: string): Promise<string | null> {
+	async processMessage(content: string): Promise<WxArticleResult | null> {
 		// Check if feature is enabled
 		if (!this.plugin.settings.fetchWechatArticleContent) {
 			return null;
@@ -453,12 +458,13 @@ export default class WxArticleService {
 		}
 
 		// Fetch and convert article
-		const markdown = await this.fetchArticle(url);
-		if (!markdown) {
+		const result = await this.fetchArticle(url);
+		if (!result || !result.content) {
 			return null;
 		}
 
 		// Process images
-		return await this.processArticleImages(markdown);
+		const processedContent = await this.processArticleImages(result.content);
+		return { title: result.title, content: processedContent };
 	}
 }
